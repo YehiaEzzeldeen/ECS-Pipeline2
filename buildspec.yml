@@ -1,0 +1,21 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      docker: 18
+  pre_build:
+    commands:
+      - echo test
+      - echo $(docker --version)
+      - $(aws ecr get-login --region us-west-1 --no-include-email)
+  build:
+    commands:
+      - echo Build started on `date`
+      - docker build -t nginx2 .
+      - docker tag nginx2:latest $ECR_REPOSITORY_URI:latest
+      - docker push $ECR_REPOSITORY_URI:latest
+      - printf '[{"name":"nginx2","imageUri":"%s"}]' "$ECR_REPOSITORY_URI:latest" > imageDetail.json
+artifacts:
+  files:
+    - imageDetail.json
