@@ -12,10 +12,11 @@ phases:
   build:
     commands:
       - echo Build started on `date`
+      - echo $$CODEBUILD_RESOLVED_SOURCE_VERSION
       - docker build -t nginx2 .
-      - docker tag nginx2:latest $ECR_REPOSITORY_URI:latest
-      - docker push $ECR_REPOSITORY_URI:latest
-      - printf '[{"name":"nginx2","imageUri":"%s"}]' "$ECR_REPOSITORY_URI:latest" > imageDetail.json
+      - docker tag nginx2:latest $ECR_REPOSITORY_URI:$CODEBUILD_RESOLVED_SOURCE_VERSION
+      - docker push $ECR_REPOSITORY_URI:$CODEBUILD_RESOLVED_SOURCE_VERSION
+      - printf '[{"name":"nginx2","imageUri":"%s"}]' "$ECR_REPOSITORY_URI:$CODEBUILD_RESOLVED_SOURCE_VERSION" > imageDetail.json
 artifacts:
   files:
     - imageDetail.json
